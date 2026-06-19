@@ -17,8 +17,8 @@ source.include_exts = py,png,jpg,kv,atlas,ttf
 source.exclude_exts = spec
 
 # (list) List of custom git revision, even when tag is not set
-version.regex = __version__ = ['"](.*)['"]
-version.filename = %(source.dir)s/main.py
+# version.regex = __version__ = ['"](.*)['"]
+# version.filename = %(source.dir)s/videocrawler_client.py
 
 # (str) Application versioning (method 1)
 version = 1.0.0
@@ -73,7 +73,7 @@ android.add_libs_armeabi_v7a =
 android.add_libs_arm64_v8a =
 android.add_libs_x86 =
 android.add_libs_x86_64 =
-android.gradle_dependencies =
+android.gradle_dependencies = androidx.core:core:1.9.0
 android.gradle_custom_command =
 android.manifest_placeholders =
 android.signed = False
@@ -88,8 +88,7 @@ android.archs = arm64-v8a
 # (str) Output filename
 android.filename = VideoCrawlerClient-%(version)s
 
-# (str) Output dir for the APK
-android.output_dir = ./apk
+# (str) Output dir for the APK (default: ./bin/)
 
 # (str) Permission list
 android.permissions = INTERNET,ACCESS_NETWORK_STATE,ACCESS_WIFI_STATE

@@ -3,10 +3,6 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
-    paths:
-      - 'videocrawler_client.py'
-      - 'buildozer.spec'
-      - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 
 jobs:
@@ -15,15 +11,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - name: Cache Buildozer global
+        uses: actions/cache@v4
         with:
-          workdir: .
-          buildozer_version: stable
+          path: ~/.buildozer
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+
+      - name: Build APK with Buildozer Docker
+        run: |
+          docker run --rm \
+            --volume ${{ github.workspace }}:/home/user/hostcwd \
+            --volume ~/.buildozer:/home/user/.buildozer \
+            --env APP_ANDROID_ARCH=arm64-v8a \
+            kivy/buildozer:latest \
+            buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: VideoCrawlerClient-APK
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: ./bin/*.apk
