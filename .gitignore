@@ -1,0 +1,17 @@
+# Build outputs
+*.exe
+dist/
+build/
+apk/
+# PyInstaller spec files (NOT buildozer.spec)
+VideoCrawler.spec
+VideoCrawlerServer.spec
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Buildozer
+.buildozer/
