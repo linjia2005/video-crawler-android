@@ -17,16 +17,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate Gradle Wrapper
+        working-directory: ./android-native
+        run: gradle wrapper --gradle-version 8.4
 
       - name: Build APK
         working-directory: ./android-native
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          chmod +x gradlew 2>/dev/null || true
-          gradle wrapper --gradle-version 8.4 2>/dev/null || true
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
