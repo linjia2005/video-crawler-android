@@ -21,17 +21,16 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Generate Gradle Wrapper
-        working-directory: ./android-native
+        working-directory: ./webview-apk
         run: gradle wrapper --gradle-version 8.4
 
       - name: Build APK
-        working-directory: ./android-native
+        working-directory: ./webview-apk
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
           ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: VideoCrawler-APK
-          path: ./android-native/app/build/outputs/apk/debug/*.apk
+          name: VideoCrawler-WebView-APK
+          path: ./webview-apk/app/build/outputs/apk/debug/*.apk
