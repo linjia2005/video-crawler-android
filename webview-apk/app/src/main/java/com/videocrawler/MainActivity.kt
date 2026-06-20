@@ -10,9 +10,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 
 class MainActivity : Activity() {
-    private lateinit var webView: WebView
+    private var webView: WebView? = null
     private lateinit var prefs: SharedPreferences
     private val defaultUrl = "http://192.168.1.100:5000"
 
@@ -23,8 +24,18 @@ class MainActivity : Activity() {
 
         prefs = getSharedPreferences("config", MODE_PRIVATE)
 
-        webView = findViewById(R.id.webView)
-        webView.settings.apply {
+        try {
+            initWebView()
+        } catch (e: Exception) {
+            Toast.makeText(this, "WebView初始化失败: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+
+        findViewById<Button>(R.id.btnSettings).setOnClickListener { showSettings() }
+    }
+
+    private fun initWebView() {
+        val wv = findViewById<WebView>(R.id.webView)
+        wv.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
             loadWithOverviewMode = true
@@ -32,17 +43,15 @@ class MainActivity : Activity() {
             builtInZoomControls = false
             setSupportZoom(false)
         }
-        webView.webViewClient = object : WebViewClient() {
+        wv.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(v: WebView, url: String): Boolean {
                 v.loadUrl(url)
                 return true
             }
         }
-
         val url = prefs.getString("server_url", defaultUrl) ?: defaultUrl
-        webView.loadUrl(url)
-
-        findViewById<Button>(R.id.btnSettings).setOnClickListener { showSettings() }
+        wv.loadUrl(url)
+        webView = wv
     }
 
     private fun showSettings() {
@@ -57,15 +66,15 @@ class MainActivity : Activity() {
             setPositiveButton("连接") { _, _ ->
                 val url = input.text.toString().trim()
                 prefs.edit().putString("server_url", url).apply()
-                webView.loadUrl(url)
+                findViewById<WebView>(R.id.webView).loadUrl(url)
             }
             setNegativeButton("取消", null)
         }.show()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
-            webView.goBack()
+        if (keyCode == KeyEvent.KEYCODE_BACK && webView?.canGoBack() == true) {
+            webView?.goBack()
             return true
         }
         return super.onKeyDown(keyCode, event)

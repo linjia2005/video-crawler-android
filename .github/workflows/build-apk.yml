@@ -20,17 +20,25 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Generate debug keystore
+        run: |
+          keytool -genkey -v -keystore debug.keystore \
+            -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US"
+
       - name: Generate Gradle Wrapper
         working-directory: ./webview-apk
         run: gradle wrapper --gradle-version 8.4
 
-      - name: Build APK
+      - name: Build Release APK
         working-directory: ./webview-apk
         run: |
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          cp ${{ github.workspace }}/debug.keystore app/debug.keystore
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: VideoCrawler-WebView-APK
-          path: ./webview-apk/app/build/outputs/apk/debug/*.apk
+          name: VideoCrawler-APK
+          path: ./webview-apk/app/build/outputs/apk/release/*.apk
