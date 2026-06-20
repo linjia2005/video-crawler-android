@@ -20,7 +20,3 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
-
-dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
-}
